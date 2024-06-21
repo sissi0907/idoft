@@ -31,13 +31,13 @@ jobs:
         working-directory: ${{ github.workspace }}/typescript-generator
   
       - name: Run the test
-        run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
+        run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.JsonDeserializationTest#testWithConstructors
         working-directory: ${{ github.workspace }}/typescript-generator
   
       - name: Run NonDex tool to report flaky tests
         id: nondex
         run: |
-          mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces || echo "NonDex failed" > nondex_result.txt
+          mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.JsonDeserializationTest#testWithConstructors || echo "NonDex failed" > nondex_result.txt
         working-directory: ${{ github.workspace }}/typescript-generator
         continue-on-error: true
   
