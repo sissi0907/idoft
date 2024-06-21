@@ -26,5 +26,13 @@ jobs:
         run: |
           mvn test-compile -pl core/pom.xml -am
           mvn test -pl core/pom.xml -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest#testDynamicAttributesSupport
-      - name: Run NonDex to detect flaky tests
-        run:  mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest#testDynamicAttributesSupport -DnondexRuns=10
+      - name: Get nondexTests
+        run: nondexTests=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep /test/ | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g' | tr '\n' ','); echo $nondexTests;
+      - name: Run NonDex
+        run: if [ ! -z $nondexTests ]; then printf "Running NonDex on tests:\n$nondexTests \n" ; mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex  -DnondexRuns=10 -DfailIfNoTests=false -Dtest=$nondexTests ; fi
+      - name: Find flakyTests 
+        run: if [ -d ".nondex" ]; then flakyTests=$(awk ' !x[$0]++' .nondex/*/failures); fi
+      - name: Output flakyTests
+        run: if [ ! -z "$flakyTests" ]; then printf "Found flaky tests:\n$flakyTests \n" ; exit 1 ; else printf "No flaky tests found.\n" ; fi
+
+    
