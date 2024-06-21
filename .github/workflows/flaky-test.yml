@@ -22,21 +22,17 @@ jobs:
         distribution: 'adopt'
         java-version: '8'
 
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+    # - name: Cache Maven packages
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/.m2/repository
+    #     key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-maven-
 
     - name: Clone the typescript-generator repository
       run: git clone https://github.com/vojtechhabarta/typescript-generator
       working-directory: ${{ github.workspace }}
-
-    - name: Print the latest commit
-      run: git rev-parse HEAD
-      working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Compile the module and dependencies
       run: mvn test-compile -pl typescript-generator-core -am
