@@ -13,8 +13,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          repository: Apache/Struts
-          ref: 3a7c35a014f8a3471a1b75e7546e01ecf21d5db3
+          repository: vojtechhabarta/typescript-generator
+          ref: caef58bfe55a8cd1fc5d7368c19e9ff818a7b7fa
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -24,8 +24,8 @@ jobs:
 
       - name: Compile and Test
         run: |
-          mvn test-compile -pl core/pom.xml -am
-          mvn test -pl core/pom.xml -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest#testDynamicAttributesSupport
+          mvn test-compile -pl typescript-generator-core/pom.xml -am
+          mvn test -pl typescript-generator-core/pom.xml -Dtest=cz.habarta.typescript.generator.JsonDeserializationTest#testWithConstructors
       - name: Get nondexTests
         run: nondexTests=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep /test/ | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g' | tr '\n' ','); echo $nondexTests;
       - name: Run NonDex
