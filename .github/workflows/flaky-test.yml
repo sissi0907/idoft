@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v1
         with:
-          repository: Apache/Struts  
+          repository: https://github.com/Apache/Struts
           ref: 3a7c35a014f8a3471a1b75e7546e01ecf21d5db3
 
       - name: Set up JDK
