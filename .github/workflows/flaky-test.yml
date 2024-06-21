@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-        with:
-          repository: apache/hive
-          ref: 90fa9064f2c6907fbe6237cb46d5937eebd8ea31
+        # with:
+        #   repository: apache/hive
+        #   ref: 90fa9064f2c6907fbe6237cb46d5937eebd8ea31
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -22,17 +22,39 @@ jobs:
           java-version: '8'  
           distribution: 'adopt'
 
-      - name: Compile and Test
+      - name: Clone the typescript-generator repository
+        run: git clone https://github.com/vojtechhabarta/typescript-generator
+        working-directory: ${{ github.workspace }}
+  
+      - name: Compile the module and dependencies
+        run: mvn test-compile -pl typescript-generator-core -am
+        working-directory: ${{ github.workspace }}/typescript-generator
+  
+      - name: Run the test
+        run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
+        working-directory: ${{ github.workspace }}/typescript-generator
+  
+      - name: Run NonDex tool to report flaky tests
+        id: nondex
         run: |
-          mvn test-compile -pl standalone-metastore/metastore-server/pom.xml -am
-          mvn test -pl standalone-metastore/metastore-server/pom.xml -Dtest=org.apache.hadoop.hive.metastore.TestPartitionManagement#testPartitionDiscoveryNonDefaultCatalog
-      - name: Get nondexTests
-        run: nondexTests=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep /test/ | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g' | tr '\n' ','); echo $nondexTests;
-      - name: Run NonDex
-        run: if [ ! -z $nondexTests ]; then printf "Running NonDex on tests:\n$nondexTests \n" ; mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex  -DnondexRuns=10 -DfailIfNoTests=false -Dtest=$nondexTests ; fi
-      - name: Find flakyTests 
-        run: if [ -d ".nondex" ]; then flakyTests=$(awk ' !x[$0]++' .nondex/*/failures); fi
-      - name: Output flakyTests
-        run: if [ ! -z "$flakyTests" ]; then printf "Found flaky tests:\n$flakyTests \n" ; exit 1 ; else printf "No flaky tests found.\n" ; fi
-
+          mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces || echo "NonDex failed" > nondex_result.txt
+        working-directory: ${{ github.workspace }}/typescript-generator
+        continue-on-error: true
+  
+      - name: Check NonDex results
+        if: failure()
+        run: echo "has flaky"
+      
+      # - name: Compile and Test
+      #   run: |
+      #     mvn test-compile -pl standalone-metastore/metastore-server/pom.xml -am
+      #     mvn test -pl standalone-metastore/metastore-server/pom.xml -Dtest=org.apache.hadoop.hive.metastore.TestPartitionManagement#testPartitionDiscoveryNonDefaultCatalog
+      # - name: Get nondexTests
+      #   run: nondexTests=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep /test/ | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g' | tr '\n' ','); echo $nondexTests;
+      # - name: Run NonDex
+      #   run: if [ ! -z $nondexTests ]; then printf "Running NonDex on tests:\n$nondexTests \n" ; mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex  -DnondexRuns=10 -DfailIfNoTests=false -Dtest=$nondexTests ; fi
+      # - name: Find flakyTests 
+      #   run: if [ -d ".nondex" ]; then flakyTests=$(awk ' !x[$0]++' .nondex/*/failures); fi
+      # - name: Output flakyTests
+      #   run: if [ ! -z "$flakyTests" ]; then printf "Found flaky tests:\n$flakyTests \n" ; exit 1 ; else printf "No flaky tests found.\n" ; fi
     
