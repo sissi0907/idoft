@@ -11,19 +11,20 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           repository: ‘Apache/Struts’
-          ref: ‘3a7c35a014f8a3471a1b75e7546e01ecf21d5db3’
+          ref: ‘898a8d9ef9cd223752392c8572b81b5a116680fd’
 
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: '11'  
+          distribution: 'adopt'
 
       - name: Compile and Test
         run: |
           mvn test-compile -pl core/pom.xml -am
-          mvn test -pl core/pom.xml -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest.testDynamicAttributesSupport
+          mvn test -pl core/pom.xml -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest#testDynamicAttributesSupport
       - name: Run NonDex to detect flaky tests
-        run:  mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest.testDynamicAttributesSupport -DnondexRuns=10
+        run:  mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest#testDynamicAttributesSupport -DnondexRuns=10
