@@ -1,0 +1,26 @@
+name: Test Flaky Test
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'  
+
+      - name: Compile and Test
+        run: |
+          mvn test-compile -pl core -am
+          mvn test -pl core -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest.testDynamicAttributesSupport
+      - name: Run NonDex to detect flaky tests
+        run:  mvn -B edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.struts2.views.freemarker.FreemarkerResultMockedTest.testDynamicAttributesSupport -DnondexRuns=10
