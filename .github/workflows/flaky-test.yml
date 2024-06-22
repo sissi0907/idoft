@@ -35,6 +35,11 @@ jobs:
     - name: Run the test
       run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
       working-directory: ${{ github.workspace }}/typescript-generator
+    - name: Set up JDK 8 for NonDex
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '8'
 
     - name: Run NonDex tool to report flaky tests
       id: nondex
