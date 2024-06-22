@@ -40,6 +40,10 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '8'
+    - name: Recompile the module and dependencies with JDK 8
+      run: mvn clean test-compile -pl typescript-generator-core -am -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
+      working-directory: ${{ github.workspace }}/typescript-generator
+
 
     - name: Run NonDex tool to report flaky tests
       id: nondex
