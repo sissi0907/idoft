@@ -29,7 +29,7 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Compile the module and dependencies
-      run: mvn test-compile -pl typescript-generator-core -am
+      run: mvn test-compile -pl typescript-generator-core/pom.xml -am
       working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Run the test
