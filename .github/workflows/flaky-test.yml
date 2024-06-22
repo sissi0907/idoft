@@ -29,21 +29,19 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Compile the module and dependencies
-      run: mvn test-compile -pl typescript-generator-core/pom.xml -am
+      run: mvn test-compile -pl typescript-generator-core -am -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
       working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Run the test
-      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
+      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
       working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Run NonDex tool to report flaky tests
       id: nondex
-      run: |
-        mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10 || echo "NonDex failed" > nondex_result.txt
+      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10 -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 || echo "NonDex failed" > nondex_result.txt
       working-directory: ${{ github.workspace }}/typescript-generator
       continue-on-error: true
 
     - name: Check NonDex results
       if: steps.nondex.outcome == 'failure'
       run: echo "has flaky"
-
