@@ -29,25 +29,24 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Compile the module and dependencies
-      run: mvn test-compile -pl typescript-generator-core -am -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
+      run: mvn test-compile -pl typescript-generator-core -am 
       working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Run the test
-      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
-      working-directory: ${{ github.workspace }}/typescript-generator
+      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
     - name: Set up JDK 8 for NonDex
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
         java-version: '8'
     - name: Recompile the module and dependencies with JDK 8
-      run: mvn clean test-compile -pl typescript-generator-core -am -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
+      run: mvn clean test-compile -pl typescript-generator-core -am 
       working-directory: ${{ github.workspace }}/typescript-generator
 
 
     - name: Run NonDex tool to report flaky tests
       id: nondex
-      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10 -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 || echo "NonDex failed" > nondex_result.txt
+      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
       working-directory: ${{ github.workspace }}/typescript-generator
       continue-on-error: true
 
