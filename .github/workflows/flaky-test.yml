@@ -35,11 +35,7 @@ jobs:
       working-directory: ${{ github.workspace }}/typescript-generator
 
 
-    - uses: actions/checkout@v1
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
+    
     - name: Get commit range
       run: COMMIT_RANGE=$(git rev-parse origin/master)...$(git rev-parse HEAD); echo $COMMIT_RANGE;
     - name: Debug commit range diff
