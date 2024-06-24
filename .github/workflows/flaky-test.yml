@@ -26,8 +26,8 @@ jobs:
       run: git clone https://github.com/vojtechhabarta/typescript-generator
       working-directory: ${{ github.workspace }}
 
-    - name: Compile the module and dependencies
-      run: mvn -f typescript-generator-core/pom.xml clean install -DskipTests
+    - name: Compile the module and dependencies (excluding tests)
+      run: mvn -f typescript-generator-core/pom.xml clean install -Dmaven.surefire.skip=true
       working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Run the test
