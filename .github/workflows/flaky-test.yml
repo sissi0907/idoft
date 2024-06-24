@@ -27,7 +27,7 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Compile the module and dependencies
-      run: mvn test-compile -pl typescript-generator-core -am 
+      run: mvn -f typescript-generator-core/pom.xml clean install -DskipTests
       working-directory: ${{ github.workspace }}/typescript-generator
 
     - name: Run the test
@@ -39,9 +39,7 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '8'
-    - name: Compile the module with JDK 8 
-      run: mvn clean test-compile -pl typescript-generator-core -am -Dmaven.compiler.source=8 -Dmaven.compiler.target=8
-      working-directory: ${{ github.workspace }}/typescript-generator
+  
     
     - name: Run NonDex tool to report flaky tests
       id: nondex
