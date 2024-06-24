@@ -22,17 +22,17 @@ jobs:
         distribution: 'adopt'
         java-version: '11'
 
-    - name: Clone the typescript-generator repository
-      run: git clone https://github.com/vojtechhabarta/typescript-generator
+    - name: Clone the apache/hive repository
+      run: git clone https://github.com/apache/hive
       working-directory: ${{ github.workspace }}
 
     - name: Compile the module and dependencies
-      run: mvn test-compile -pl typescript-generator-core -am 
-      working-directory: ${{ github.workspace }}/typescript-generator
+      run: mvn test-compile -pl standalone-metastore/metastore-server -am 
+      working-directory: ${{ github.workspace }}/hive
 
     - name: Run the test
-      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
-      working-directory: ${{ github.workspace }}/typescript-generator
+      run: mvn -pl standalone-metastore/metastore-server test -Dtest=org.apache.hadoop.hive.metastore.TestPartitionManagement#testPartitionDiscoveryNonDefaultCatalog
+      working-directory: ${{ github.workspace }}/hive
       
     - name: Set up JDK 8 for NonDex
       uses: actions/setup-java@v2
@@ -42,8 +42,8 @@ jobs:
     
     - name: Run NonDex tool to report flaky tests
       id: nondex
-      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
-      working-directory: ${{ github.workspace }}/typescript-generator
+      run: mvn -pl standalone-metastore/metastore-server edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.hadoop.hive.metastore.TestPartitionManagement#testPartitionDiscoveryNonDefaultCatalog -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
+      working-directory: ${{ github.workspace }}/hive
       continue-on-error: true
 
     - name: Check NonDex results
