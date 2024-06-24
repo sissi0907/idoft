@@ -23,16 +23,16 @@ jobs:
         java-version: '11'
 
     - name: Clone the typescript-generator repository
-      run: git clone https://github.com/vojtechhabarta/typescript-generator
+      run: git clone https://github.com/wro4j/wro4j
       working-directory: ${{ github.workspace }}
 
     - name: Compile the module and dependencies (excluding tests)
-      run: mvn -f typescript-generator-core/pom.xml clean install -Dmaven.surefire.skip=true
-      working-directory: ${{ github.workspace }}/typescript-generator
+      run: mvn -f wro4j-extensions/pom.xml clean install -Dmaven.surefire.skip=true
+      working-directory: ${{ github.workspace }}/wro4j
 
     - name: Run the test
-      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
-      working-directory: ${{ github.workspace }}/typescript-generator
+      run: mvn -pl wro4j-extensions test -Dtest=ro.isdc.wro.extensions.processor.support.sass.TestRubySassEngine#shouldProcessValidCss
+      working-directory: ${{ github.workspace }}/wro4j
 
 
     
