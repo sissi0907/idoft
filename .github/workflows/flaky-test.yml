@@ -16,13 +16,14 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '8'
       - name: Clone the typescript-generator repository
         run: git clone https://github.com/vojtechhabarta/typescript-generator
         working-directory: ${{ github.workspace }}
-      - name: Compile the module and dependencies (excluding tests)  
-        run: mvn -f typescript-generator-core/pom.xml test-compile  
+      - name: Compile the module and dependencies (with tests)
+        run: mvn package -DskipTests  
         working-directory: ${{ github.workspace }}/typescript-generator
+
       - name: Run the test
         run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
         working-directory: ${{ github.workspace }}/typescript-generator
