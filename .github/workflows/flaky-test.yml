@@ -36,16 +36,7 @@ jobs:
 
 
     
-    - name: Get commit range
-      run: COMMIT_RANGE=$(git rev-parse origin/master)...$(git rev-parse HEAD); echo $COMMIT_RANGE;
-    - name: Debug commit range diff
-      run: COMMIT_FILES=$(git diff --name-status --diff-filter=AM $COMMIT_RANGE); echo $COMMIT_FILES ;
-    - name: Debug git diff
-      run: DIFF_FILES=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }}); echo $DIFF_FILES ;
-    - name: Debug grep
-      run: echo $(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep '/test/');
-    - name: Debug sed
-      run: echo $(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep '/test/' | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g');
+ 
     - name: Get nondexTests
       run: nondexTests=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep /test/ | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g' | tr '\n' ','); echo $nondexTests;
     - name: Run NonDex
