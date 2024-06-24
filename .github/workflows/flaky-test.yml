@@ -16,17 +16,17 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '8'
+          java-version: '11'
       - name: Clone the typescript-generator repository
-        run: git clone https://github.com/vojtechhabarta/typescript-generator
+        run: git clone https://github.com/apache/hadoop
         working-directory: ${{ github.workspace }}
       - name: Compile the module and dependencies (with tests)
         run: mvn package -DskipTests  
-        working-directory: ${{ github.workspace }}/typescript-generator
+        working-directory: ${{ github.workspace }}/hadoop
 
       - name: Run the test
-        run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
-        working-directory: ${{ github.workspace }}/typescript-generator
+        run: mvn -pl hadoop-tools/hadoop-distcp test -Dtest=org.apache.hadoop.tools.util.TestThrottledInputStream#testRead
+        working-directory: ${{ github.workspace }}/hadoop
       - name: Set up JDK 8 for NonDex
         uses: actions/setup-java@v2
         with:
@@ -34,8 +34,8 @@ jobs:
           java-version: '8'
       - name: Run NonDex tool to report flaky tests
         id: nondex
-        run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
-        working-directory: ${{ github.workspace }}/typescript-generator
+        run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.hadoop.tools.util.TestThrottledInputStream#testRead -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
+        working-directory: ${{ github.workspace }}/hadoop
         continue-on-error: true
       - name: Check NonDex results
         if: steps.nondex.outcome == 'failure'
