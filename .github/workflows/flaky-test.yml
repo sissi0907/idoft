@@ -55,7 +55,7 @@ jobs:
     
     - name: Run NonDex tool to report flaky tests
       id: nondex
-      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:debug -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
+      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:2.1.7:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
       working-directory: ${{ github.workspace }}/typescript-generator
       continue-on-error: true
 
