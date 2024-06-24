@@ -25,6 +25,10 @@ jobs:
     - name: Clone the apache/hive repository
       run: git clone https://github.com/apache/hive
       working-directory: ${{ github.workspace }}
+      
+    - name: Purge local repository and install dependencies
+      run: mvn dependency:purge-local-repository clean install -U
+      working-directory: ${{ github.workspace }}/hive
 
     - name: Compile the module and dependencies
       run: mvn test-compile -pl standalone-metastore/metastore-server -am 
