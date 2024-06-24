@@ -1,64 +1,49 @@
 name: Test Flaky Test
-
-on:
-  push:
-    branches:
+on:  
+  push:   
+    branches:      
+      - main 
+  pull_request:   
+    branches:     
       - main
-  pull_request:
-    branches:
-      - main
-
-jobs:
-  build-and-test:
+jobs:  
+  build-and-test:    
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: '11'
-
-    - name: Clone the typescript-generator repository
-      run: git clone https://github.com/vojtechhabarta/typescript-generator
-      working-directory: ${{ github.workspace }}
-
-    - name: Compile the module and dependencies (excluding tests)
-      run: mvn -f typescript-generator-core/pom.xml clean install -Dmaven.surefire.skip=true
-      working-directory: ${{ github.workspace }}/typescript-generator
-
-    - name: Run the test
-      run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces
-      working-directory: ${{ github.workspace }}/typescript-generator
-
     
- 
-    # - name: Get nondexTests
-    #   run: nondexTests=$(git diff --name-status --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} | grep /test/ | sed -e 's;.*test/java/;;' -e 's/.java//' -e 's;/;.;g' | tr '\n' ','); echo $nondexTests;
-    # - name: Run NonDex
-    #   run: if [ ! -z $nondexTests ]; then printf "Running NonDex on tests:\n$nondexTests \n" ; mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn edu.illinois:nondex-maven-plugin:1.1.2:nondex -DnondexSeed=$RANDOM -DnondexRuns=10 -DfailIfNoTests=false -Dtest=$nondexTests ; fi
-    # - name: Find flakyTests 
-    #   run: if [ -d ".nondex" ]; then flakyTests=$(awk ' !x[$0]++' .nondex/*/failures); fi
-    # - name: Output flakyTests
-    #   run: if [ ! -z "$flakyTests" ]; then printf "Found flaky tests:\n$flakyTests \n" ; exit 1 ; else printf "No flaky tests found.\n" ; fi
+    steps:    
+      - name: Checkout repository      
+        uses: actions/checkout@v3
+          
+      - name: Set up JDK 11      
+        uses: actions/setup-java@v2      
+        with:        
+          distribution: 'adopt'        
+          java-version: '11'
+      - name: Clone the typescript-generator repository      
+        run: git clone https://github.com/vojtechhabarta/typescript-generator      
+        working-directory: ${{ github.workspace }}
+        
+      - name: Run the test      
+        run: mvn -pl typescript-generator-core test -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces      
+        working-directory: ${{ github.workspace }}/typescript-generator  
+        
+      - name: Set up JDK 8 for NonDex      
+        uses: actions/setup-java@v2      
+        with:        
+          distribution: 'adopt'        
+          java-version: '8'       
+          
+      # - name: Compile the module and dependencies (optional)  
+      #   run: mvn -pl typescript-generator-core test-compile 
+      #   working-directory: ${{ github.workspace }}/typescript-generator
+        
+      - name: Run NonDex tool to report flaky tests      
+        id: nondex      
+        run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt      
+        working-directory: ${{ github.workspace }}/typescript-generator      
+        continue-on-error: true
+        
+      - name: Check NonDex results      
+        if: steps.nondex.outcome == 'failure'      
+        run: echo "has flaky"
 
-      
-    - name: Set up JDK 8 for NonDex
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: '8'
-  
-    
-    - name: Run NonDex tool to report flaky tests
-      id: nondex
-      run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:2.1.7:nondex -Dtest=cz.habarta.typescript.generator.TaggedUnionsTest#testTaggedUnionsWithInterfaces -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
-      working-directory: ${{ github.workspace }}/typescript-generator
-      continue-on-error: true
-
-    - name: Check NonDex results
-      if: steps.nondex.outcome == 'failure'
-      run: echo "has flaky"
