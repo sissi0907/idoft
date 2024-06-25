@@ -35,7 +35,7 @@ jobs:
       - name: Run NonDex tool to report flaky tests
         id: nondex
         run: mvn -pl mockserver-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.mockserver.serialization.serializers.body.JsonBodySerializerTest#shouldSerializeJsonBodyAsObject -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
-        working-directory: ${{ github.workspace }}/mockserver
+        #working-directory: ${{ github.workspace }}/mockserver
         continue-on-error: true
       - name: Check NonDex results
         if: steps.nondex.outcome == 'failure'
