@@ -24,9 +24,9 @@ jobs:
         run: mvn package -DskipTests  
         working-directory: ${{ github.workspace }}/mockserver
 
-      - name: Run the test
-        run: mvn -pl mockserver-core test -Dtest=org.mockserver.serialization.serializers.body.JsonBodySerializerTest#shouldSerializeJsonBodyAsObject
-        working-directory: ${{ github.workspace }}/mockserver
+      # - name: Run the test
+      #   run: mvn -pl mockserver-core test -Dtest=org.mockserver.serialization.serializers.body.JsonBodySerializerTest#shouldSerializeJsonBodyAsObject
+      #   working-directory: ${{ github.workspace }}/mockserver
       - name: Set up JDK 8 for NonDex
         uses: actions/setup-java@v2
         with:
