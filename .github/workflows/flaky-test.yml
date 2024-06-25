@@ -34,7 +34,7 @@ jobs:
           java-version: '8'
       - name: Run NonDex tool to report flaky tests
         id: nondex
-        run: mvn -pl typescript-generator-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.hadoop.tools.util.TestThrottledInputStream#testRead -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
+        run: mvn -pl hadoop-tools/hadoop-distcp edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.apache.hadoop.tools.util.TestThrottledInputStream#testRead -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
         working-directory: ${{ github.workspace }}/hadoop
         continue-on-error: true
       - name: Check NonDex results
