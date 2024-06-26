@@ -18,11 +18,11 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - name: Clone the typescript-generator repository
-        run: git clone https://github.com/mock-server/mockserver
+        run: git clone https://github.com/zalando/riptide
         working-directory: ${{ github.workspace }}
       - name: Compile the module and dependencies (with tests)
         run: mvn package -DskipTests  
-        working-directory: ${{ github.workspace }}/mockserver
+        working-directory: ${{ github.workspace }}/riptide
 
       # - name: Run the test
       #   run: mvn -pl mockserver-core test -Dtest=org.mockserver.serialization.serializers.body.JsonBodySerializerTest#shouldSerializeJsonBodyAsObject
@@ -34,8 +34,8 @@ jobs:
           java-version: '8'
       - name: Run NonDex tool to report flaky tests
         id: nondex
-        run: mvn -pl mockserver-core edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.mockserver.mock.HttpStateTest#shouldHandleRetrieveLogMessagesRequest -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
-        working-directory: ${{ github.workspace }}/mockserver
+        run: mvn -pl riptide-spring-boot-starter edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=org.zalando.riptide.spring.AccessTokensDefaultCredentialsDirectoryTest#shouldUseCredentialsDirectory -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
+        working-directory: ${{ github.workspace }}/riptide
         continue-on-error: true
       - name: Check NonDex results
         if: steps.nondex.outcome == 'failure'
