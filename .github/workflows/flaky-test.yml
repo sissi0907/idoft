@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '11'
+          java-version: '17'
       - name: Clone the typescript-generator repository
         run: git clone https://github.com/zalando/riptide
         working-directory: ${{ github.workspace }}
