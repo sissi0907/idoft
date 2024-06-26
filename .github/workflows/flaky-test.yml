@@ -34,7 +34,7 @@ jobs:
           java-version: '8'
       - name: Run NonDex tool to report flaky tests
         id: nondex
-        run: mvn -pl schemacrawler-utility edu.illinois:nondex-maven-plugin:1.1.2:nondex -Dtest=us.fatehi.utility.test.html.AnchorTest#anchor2 -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
+        run: mvn -pl schemacrawler-utility edu.illinois:nondex-maven-plugin:1.1.2:debug -Dtest=us.fatehi.utility.test.html.AnchorTest#anchor2 -DnondexRuns=10  || echo "NonDex failed" > nondex_result.txt
         working-directory: ${{ github.workspace }}/SchemaCrawler
         continue-on-error: true
       - name: Check NonDex results
